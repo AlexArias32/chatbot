@@ -1,0 +1,16 @@
+soporte_bot/
+│
+├── app.py
+├── templates/
+│   └── index.html
+├── static/
+│   ├── style.css
+│   └── script.js
+├── requirements.txt
+├── render.yaml
+└── README.md
+
+requirements.txt
+flask
+openai
+python-dotenv
