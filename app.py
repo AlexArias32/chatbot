@@ -3,20 +3,24 @@ import openai
 import os
 from dotenv import load_dotenv
 
+# Carga la clave de OpenAI desde .env
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
+# Página principal
 @app.route("/")
 def home():
     return render_template("index.html")
 
+# Ruta para procesar preguntas
 @app.route("/preguntar", methods=["POST"])
 def preguntar():
     data = request.get_json()
     pregunta = data.get("mensaje", "")
 
+    # Prompt para ChatGPT
     prompt = f"""
     Eres un asesor de soporte técnico experto en Windows, macOS, redes e instalación de software.
     Responde de forma clara y paso a paso.
@@ -28,13 +32,9 @@ def preguntar():
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}]
         )
-        texto = respuesta["choices"][0]["message"]["content"]
+        # Acceso correcto a la respuesta
+        texto = respuesta.choices[0].message.content
         return jsonify({"respuesta": texto})
 
     except Exception as e:
         print("Error en la API:", e)
-        return jsonify({"respuesta": "⚠️ Ocurrió un error procesando tu solicitud."})
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
