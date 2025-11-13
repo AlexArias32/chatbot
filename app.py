@@ -19,18 +19,22 @@ def preguntar():
 
     prompt = f"""
     Eres un asesor de soporte técnico experto en Windows, macOS, redes e instalación de software.
-    Ofrece soluciones paso a paso, de forma clara y amable.
+    Responde de forma clara y paso a paso.
     Usuario: {pregunta}
     """
 
-    respuesta = openai.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
-    )
+    try:
+        respuesta = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        texto = respuesta["choices"][0]["message"]["content"]
+        return jsonify({"respuesta": texto})
 
-    texto = respuesta.choices[0].message.content
-    return jsonify({"respuesta": texto})
+    except Exception as e:
+        print("Error en la API:", e)
+        return jsonify({"respuesta": "⚠️ Ocurrió un error procesando tu solicitud."})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port, debug=True)
